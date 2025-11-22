@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,4 +6,44 @@
 
 body {
   background-color: #000;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transition: background-color 0.5s ease; /* Smooth transition */
 }
+
+/* --- DEFAULT THEME (NEBULA) --- */
+body::before {
+  content: "";
+  position: fixed;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(79, 70, 229, 0.15), 
+    rgba(236, 72, 153, 0.1) 20%, 
+    rgba(0, 0, 0, 1) 60% 
+  );
+  animation: aurora-spin 20s linear infinite;
+  transition: opacity 0.5s ease;
+}
+
+/* --- PURE BLACK THEME (OLED MODE) --- */
+/* When data-theme="pure" is on the body tag, hide the nebula */
+body[data-theme='pure']::before {
+  opacity: 0;
+}
+
+body[data-theme='pure'] {
+  background-color: #000000;
+}
+
+@keyframes aurora-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+::-webkit-scrollbar { width: 0px; }
+::selection { background: rgba(99, 102, 241, 0.5); color: white; }

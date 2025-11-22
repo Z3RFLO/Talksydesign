@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'], // Default text (Clean like Pinterest)
+        display: ['Poppins', 'sans-serif'], // Headings (Bold & Aesthetic)
       },
     },
   },

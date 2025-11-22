@@ -1,26 +1,36 @@
 import React from 'react';
 import PostCard from '../components/PostCard';
 
-// Fallback data in case App.jsx fails to pass props
-const BACKUP_POSTS = [
-  { id: 101, author: "Backup_System", handle: "@sys", avatar: "B", content: "If you see this, the component connection is working, but App.jsx data is missing.", likes: 0, comments: 0, accent: "border-l-2 border-red-500", time: "Now" }
-];
-
-export default function Feed({ posts }) {
-  // Use passed posts, or use backup if empty/undefined
-  const finalPosts = (posts && posts.length > 0) ? posts : BACKUP_POSTS;
-
+export default function Feed({ posts = [], topic, onUserClick }) {
   return (
-    <div className="w-full max-w-[900px] mx-auto pt-10 pb-32">
+    <div className="w-full max-w-[900px] mx-auto pt-10 pb-32 animate-in fade-in duration-500">
       <div className="mb-12">
-        <h1 className="text-5xl font-black text-white mb-2 tracking-tight">Feed</h1>
-        <p className="text-gray-500 text-lg">Live transmissions.</p>
+        {/* APPLIED NEW FONT HERE: font-display */}
+        <h1 className="text-5xl font-display font-black text-white mb-2 tracking-tight flex items-center gap-4">
+          {topic && <span className="text-gray-500 text-3xl">#</span>} 
+          {topic ? topic : "Feed"}
+        </h1>
+        <p className="text-gray-500 text-lg font-medium">
+          {topic ? `Exploring transmissions about ${topic}.` : "Live transmissions from the void."}
+        </p>
       </div>
       
       <div className="flex flex-col gap-6">
-        {finalPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+        {(!posts || posts.length === 0) ? (
+          <div className="p-10 border border-white/10 bg-[#121214] rounded-3xl text-center">
+            <h2 className="text-xl font-display font-bold text-white mb-2">No signals yet.</h2>
+            <p className="text-gray-500">Be the first to transmit.</p>
+          </div>
+        ) : (
+          posts.map((post, index) => (
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              delay={index * 0.1} 
+              onUserClick={onUserClick}
+            />
+          ))
+        )}
       </div>
     </div>
   );

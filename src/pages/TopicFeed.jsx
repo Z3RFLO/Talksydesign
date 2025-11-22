@@ -1,93 +1,131 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Hash, Send, Check } from 'lucide-react';
+import { 
+  ArrowLeft, Hash, Bell, Users, Search, HelpCircle, 
+  PlusCircle, Gift, Sticker, Smile, Send 
+} from 'lucide-react';
 import PostCard from '../components/PostCard';
 
-export default function TopicFeed({ posts = [], onPost }) {
+export default function TopicFeed({ posts = [], onPost, onUserClick }) {
   const { topic } = useParams(); 
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
-  const [isJoined, setIsJoined] = useState(false);
 
-  // Filter posts: Show posts with this tag
   const filteredPosts = posts.filter(p => p.tags && p.tags.includes(topic));
+  
+  const displayPosts = filteredPosts.length > 0 ? filteredPosts : [
+    { id: 999, author: "System", handle: "@void", avatar: "S", content: `Welcome to #${topic}. This is the start of the channel.`, likes: 0, comments: 0, accent: "border-l-2 border-gray-700", time: "Today" }
+  ];
 
-  // Handle sending a message from the bottom bar
   const handleSend = () => {
     if (inputValue.trim()) {
-      // We send the post back to App, but we manually add the current topic tag
-      // Note: In a real app, you'd pass the tag to onPost, but for now this adds it to the main feed
-      onPost(inputValue); 
+      onPost(inputValue);
       setInputValue("");
     }
   };
 
   return (
-    <div className="w-full max-w-[900px] mx-auto pt-8 animate-in fade-in duration-500">
+    // DISCORD LAYOUT: Flex Column with Fixed Height behavior
+    <div className="flex flex-col h-[calc(100vh-40px)] w-full max-w-[1200px] mx-auto animate-in fade-in duration-300">
       
-      {/* --- 1. COMPACT HEADER --- */}
-      <div className="flex items-center justify-between mb-8 bg-[#0c0c0e] border border-white/10 p-4 rounded-[24px] sticky top-6 z-30 shadow-2xl backdrop-blur-xl">
+      {/* --- 1. DISCORD HEADER (Sticky Top) --- */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#0a0a0a]/95 backdrop-blur-md sticky top-0 z-30 shadow-md">
+        {/* Left: Channel Name */}
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 bg-white/5 hover:bg-white hover:text-black rounded-full flex items-center justify-center transition-all">
+          <button onClick={() => navigate(-1)} className="hover:bg-white/10 p-1 rounded text-gray-400 hover:text-white transition-colors">
             <ArrowLeft size={20} />
           </button>
-          <div>
-             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-               <span className="text-indigo-500">#</span> {topic}
-             </h1>
-             <p className="text-xs text-gray-500">14.2k Members • 500 Online</p>
+          
+          <div className="flex items-center gap-2">
+            <Hash size={24} className="text-gray-400" />
+            <h1 className="text-xl font-bold text-white font-display tracking-tight">{topic}</h1>
           </div>
+          
+          {/* Divider */}
+          <div className="h-6 w-px bg-white/10 hidden md:block"></div>
+          <p className="text-sm text-gray-400 hidden md:block truncate max-w-xs cursor-default">
+            The official frequency for {topic} enthusiasts.
+          </p>
         </div>
 
-        <button 
-          onClick={() => setIsJoined(!isJoined)}
-          className={`px-6 py-2 rounded-full font-bold text-sm transition-all ${isJoined ? 'bg-green-500/10 text-green-400 border border-green-500/50' : 'bg-white text-black hover:scale-105'}`}
-        >
-          {isJoined ? <span className="flex items-center gap-2"><Check size={14}/> Joined</span> : 'Join'}
-        </button>
-      </div>
-
-      {/* --- 2. SCROLLABLE POST LIST --- */}
-      {/* Added pb-32 so the last post isn't hidden behind the input bar */}
-      <div className="flex flex-col gap-6 pb-32">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post, index) => (
-            <PostCard key={post.id} post={post} delay={index * 0.1} />
-          ))
-        ) : (
-          <div className="text-center py-20 opacity-50">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Hash size={30} />
-            </div>
-            <p>No signals in #{topic} yet.</p>
+        {/* Right: Toolbar Icons */}
+        <div className="flex items-center gap-5 text-gray-400">
+          <Bell size={22} className="hover:text-white cursor-pointer transition-colors" />
+          <Users size={22} className="hover:text-white cursor-pointer transition-colors hidden sm:block" />
+          
+          {/* Search Box Mini */}
+          <div className="hidden lg:flex items-center bg-[#111] px-2 py-1 rounded border border-white/5">
+            <input placeholder="Search" className="bg-transparent text-sm text-white outline-none w-24 placeholder-gray-600" />
+            <Search size={14} />
           </div>
-        )}
+          
+          <HelpCircle size={22} className="hover:text-white cursor-pointer transition-colors hidden sm:block" />
+        </div>
       </div>
 
-      {/* --- 3. FIXED BOTTOM INPUT (Chat Style) --- */}
-      <div className="fixed bottom-6 left-[160px] right-10 z-40">
-        <div className="max-w-[900px] mx-auto">
-          <div className="flex gap-3 items-center p-2 pl-4 bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-             
-             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-bold shrink-0 text-xs border border-white/10">Y</div>
-             
-             <input 
-               type="text" 
-               value={inputValue}
-               onChange={(e) => setInputValue(e.target.value)}
-               placeholder={`Transmit to #${topic}...`}
-               className="w-full bg-transparent text-lg text-white placeholder-gray-500 outline-none h-full"
-               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-             />
-             
-             <button 
-               onClick={handleSend}
-               className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-500 transition-all shadow-lg hover:scale-105 active:scale-95 shrink-0"
-             >
-                <Send size={20} />
+      {/* --- 2. SCROLLABLE CHAT STREAM --- */}
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 scrollbar-hide">
+        {/* Welcome Message */}
+        <div className="mt-10 mb-16 px-4">
+          <div className="w-16 h-16 bg-[#202225] rounded-full flex items-center justify-center mb-4">
+            <Hash size={40} className="text-white" />
+          </div>
+          <h2 className="text-3xl font-black text-white mb-2">Welcome to #{topic}!</h2>
+          <p className="text-gray-400">This is the start of the <span className="font-bold text-white">#{topic}</span> channel.</p>
+        </div>
+
+        {displayPosts.map((post, index) => (
+          <div key={post.id} className="hover:bg-[#2f3136]/30 -mx-4 px-4 py-2 rounded-lg transition-colors">
+             {/* We reuse PostCard but you could simplify it here to look more like a chat message if you wanted */}
+             <PostCard key={post.id} post={post} delay={0} onUserClick={onUserClick} />
+          </div>
+        ))}
+        
+        {/* Invisible div to push content up so it's not hidden behind input */}
+        <div className="h-4"></div> 
+      </div>
+
+      {/* --- 3. DISCORD INPUT BAR (Sticky Bottom) --- */}
+      <div className="px-4 pb-6 pt-2 bg-[#000] z-30">
+        <div className="bg-[#202225] rounded-xl flex items-center px-4 py-3 border-t border-white/5 shadow-lg">
+          
+          {/* Upload Button */}
+          <button className="bg-gray-400 text-[#202225] rounded-full p-0.5 hover:text-white hover:bg-gray-500 transition-colors mr-4">
+            <PlusCircle size={24} fill="currentColor" className="text-[#202225]" />
+          </button>
+
+          {/* Text Input */}
+          <input 
+            type="text" 
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder={`Message #${topic}`} 
+            className="flex-1 bg-transparent text-gray-200 placeholder-gray-500 outline-none text-base font-medium"
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          />
+
+          {/* Right Icons (Gift, GIF, Emoji) */}
+          <div className="flex items-center gap-4 text-gray-400 mx-2">
+            <Gift size={24} className="hover:text-yellow-400 cursor-pointer transition-colors hidden sm:block" />
+            <Sticker size={24} className="hover:text-blue-400 cursor-pointer transition-colors" />
+            <Smile size={24} className="hover:text-yellow-400 cursor-pointer transition-colors" />
+          </div>
+
+          {/* Send Button (Only visible when typing) */}
+          {inputValue.trim() && (
+             <button onClick={handleSend} className="ml-2 text-indigo-400 hover:text-indigo-300 transition-colors">
+               <Send size={24} />
              </button>
-          </div>
+          )}
+
         </div>
+        
+        {/* Typing Indicator (Visual flair) */}
+        {inputValue.length > 0 && (
+           <div className="absolute bottom-1 left-6 text-[10px] font-bold text-gray-500 animate-pulse">
+             You are typing...
+           </div>
+        )}
       </div>
 
     </div>
