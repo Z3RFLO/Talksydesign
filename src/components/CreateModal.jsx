@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X, Zap, Hash, Globe } from 'lucide-react';
 
-export default function CreateModal({ isOpen, onClose }) {
+export default function CreateModal({ isOpen, onClose, onPost }) {
+  // 1. This holds the text you type
+  const [text, setText] = useState(""); 
+
   if (!isOpen) return null;
+
+  // 2. This runs when you click "Post"
+  const handleSubmit = () => {
+    if (text.trim()) {
+      onPost(text); // Send text to the App
+      setText("");  // Clear the box
+      onClose();    // Close the window
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-      {/* Modal Card */}
       <div className="bg-[#0a0a0a] w-full max-w-2xl rounded-[32px] border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.9)] p-8 relative transform transition-all scale-100">
         
         {/* Header */}
@@ -20,11 +31,13 @@ export default function CreateModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Input Area */}
+        {/* Input Area - NOW CONNECTED */}
         <div className="flex gap-4">
            <div className="w-12 h-12 rounded-2xl bg-[#18181b] border border-[#27272a] flex items-center justify-center text-white font-bold shrink-0">Y</div>
            <textarea 
              autoFocus
+             value={text}
+             onChange={(e) => setText(e.target.value)} // This updates the text as you type
              placeholder="What is happening in the void?"
              className="w-full h-40 bg-transparent text-xl text-white placeholder-gray-600 outline-none resize-none border-none p-2"
            />
@@ -37,9 +50,11 @@ export default function CreateModal({ isOpen, onClose }) {
              <button className="hover:text-blue-400 hover:bg-blue-400/10 p-2 rounded-full transition-all"><Hash size={20}/></button>
              <button className="hover:text-green-400 hover:bg-green-400/10 p-2 rounded-full transition-all"><Globe size={20}/></button>
           </div>
+          
+          {/* Post Button - NOW CLICKABLE */}
           <button 
-            onClick={onClose}
-            className="bg-white text-black px-8 py-2.5 rounded-full font-bold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all"
+            onClick={handleSubmit} // This calls the submit function
+            className="bg-white text-black px-8 py-2.5 rounded-full font-bold text-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all active:scale-95"
           >
             Post
           </button>

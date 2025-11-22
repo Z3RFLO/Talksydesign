@@ -1,13 +1,15 @@
 import React from 'react';
 import PostCard from '../components/PostCard';
 
-const MOCK_POSTS = [
-  { id: 1, author: "Design_God", handle: "@visuals", avatar: "D", content: "Dark mode isn't just about black backgrounds. It's about hierarchy, depth, and managing light.", likes: 245, comments: 12, accent: "border-l-2 border-indigo-500", time: "2h" },
-  { id: 2, author: "CodeNinja", handle: "@dev_guy", avatar: "C", content: "Just deleted 500 lines of legacy code. Best feeling in the world.", likes: 890, comments: 45, accent: "border-l-2 border-emerald-500", time: "4h" },
-  { id: 3, author: "Minimalist", handle: "@less", avatar: "M", content: "Silence is a sound. White space is an element.", likes: 56, comments: 2, accent: "border-l-2 border-pink-500", time: "6h" },
+// Fallback data in case App.jsx fails to pass props
+const BACKUP_POSTS = [
+  { id: 101, author: "Backup_System", handle: "@sys", avatar: "B", content: "If you see this, the component connection is working, but App.jsx data is missing.", likes: 0, comments: 0, accent: "border-l-2 border-red-500", time: "Now" }
 ];
 
-export default function Feed() {
+export default function Feed({ posts }) {
+  // Use passed posts, or use backup if empty/undefined
+  const finalPosts = (posts && posts.length > 0) ? posts : BACKUP_POSTS;
+
   return (
     <div className="w-full max-w-[900px] mx-auto pt-10 pb-32">
       <div className="mb-12">
@@ -16,8 +18,8 @@ export default function Feed() {
       </div>
       
       <div className="flex flex-col gap-6">
-        {MOCK_POSTS.map((post, index) => (
-          <PostCard key={post.id} post={post} delay={index * 0.1} />
+        {finalPosts.map((post) => (
+          <PostCard key={post.id} post={post} />
         ))}
       </div>
     </div>

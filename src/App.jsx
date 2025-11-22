@@ -1,51 +1,74 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, MessageSquareText } from 'lucide-react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
-// Imports from our new folders
 import Sidebar from './components/Sidebar';
 import CreateModal from './components/CreateModal';
 import Feed from './pages/Feed';
-import Explore from './pages/Explore'; // (Create this file similar to Feed if you want)
+import Explore from './pages/Explore';
+import TopicFeed from './pages/TopicFeed';
 
-/* --- GLOBAL STYLES --- */
+const INITIAL_POSTS = [
+  { id: 1, author: "Design_God", handle: "@visuals", avatar: "D", content: "Dark mode isn't just about black backgrounds. It's about hierarchy.", likes: 245, comments: 12, accent: "border-l-2 border-indigo-500", time: "2h", tags: ["Design", "Void", "Cyberpunk"] },
+  { id: 2, author: "CodeNinja", handle: "@dev_guy", avatar: "C", content: "Just deleted 500 lines of legacy code. Best feeling in the world.", likes: 890, comments: 45, accent: "border-l-2 border-emerald-500", time: "4h", tags: ["Coding", "React"] },
+];
+
 const StyleEngine = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
     body { background-color: #000; color: #fff; font-family: 'Outfit', sans-serif; margin: 0; overflow-x: hidden; }
     ::-webkit-scrollbar { width: 0px; }
-    @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   `}</style>
 );
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
   const [isModalOpen, setModalOpen] = useState(false);
+  const [posts, setPosts] = useState(INITIAL_POSTS);
+  const location = useLocation();
+
+  const handleNewPost = (text) => {
+    // Create new post object
+    const newPost = { 
+      id: Date.now(), 
+      author: "You", 
+      handle: "@user", 
+      avatar: "Y", 
+      content: text, 
+      likes: 0, 
+      comments: 0, 
+      accent: "border-l-2 border-white", 
+      time: "Just now", 
+      tags: [] 
+    };
+    
+    // Update state correctly
+    setPosts((prevPosts) => [newPost, ...prevPosts]);
+  };
 
   return (
-    <div className="min-h-screen flex justify-center bg-black">
+    <div className="min-h-screen flex justify-center bg-black relative">
       <StyleEngine />
+      <Sidebar />
       
-      {/* 1. Sidebar */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      {/* 2. Main Content */}
       <main className="w-full pl-[120px] pr-10">
-        {activeTab === 'home' && <Feed />}
-        {activeTab === 'explore' && <div className="text-white pt-20 text-center text-2xl">Explore View (Create pages/Explore.jsx)</div>}
-        {activeTab === 'profile' && <div className="text-white pt-20 text-center text-2xl">Profile View</div>}
+        <Routes>
+          <Route path="/" element={<Feed posts={posts} />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/explore/:topic" element={<TopicFeed posts={posts} onPost={handleNewPost} />} />
+        </Routes>
       </main>
 
-      {/* 3. FAB (Floating Action Button) */}
-      {/* FIX: Removed rotation, added scale pop */}
-      <div 
-        onClick={() => setModalOpen(true)}
-        className="fixed bottom-12 right-12 w-20 h-20 bg-white rounded-[28px] flex items-center justify-center cursor-pointer shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] z-[100]"
-      >
-        <Plus size={40} color="black" strokeWidth={2.5} />
-      </div>
+      {/* FAB - Logic Check for visibility */}
+      {location.pathname === '/' && (
+        <button 
+          onClick={() => setModalOpen(true)} 
+          className="fixed bottom-12 right-12 w-20 h-20 bg-white rounded-[28px] flex items-center justify-center cursor-pointer shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-110 z-50"
+        >
+          <Plus size={40} color="black" strokeWidth={2.5} />
+        </button>
+      )}
 
-      {/* 4. Modal */}
-      <CreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+      <CreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onPost={handleNewPost} />
     </div>
   );
 }
