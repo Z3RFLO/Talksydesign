@@ -27,7 +27,7 @@ export default function Settings({ isPureBlack, toggleTheme }) {
   };
 
   return (
-    <div className="w-full max-w-[900px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="w-full max-w-[1200px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       <div className="mb-12">
         <h1 className="text-5xl font-display font-black text-white mb-2 tracking-tight">Settings</h1>

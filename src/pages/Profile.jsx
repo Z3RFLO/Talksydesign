@@ -10,15 +10,15 @@ export default function Profile() {
   const [profile, setProfile] = useState({
     name: "User",
     handle: "@user",
-    avatar: "U",
-    bio: "Developer. Dreamer. Building the void.",
-    currentCity: "Patna, India",
-    birthCity: "Danapur, India",
-    birthday: "Nov 22, 2003",
-    zodiac: "Scorpio",
-    gender: "Male",
-    language: "Hindi",
-    education: "IIT Bombay"
+    avatar: "x",
+    bio: "",
+    currentCity: "",
+    birthCity: "",
+    birthday: "",
+    zodiac: "",
+    gender: "",
+    language: "",
+    education: ""
   });
 
   // Function to handle text changes
@@ -52,7 +52,7 @@ export default function Profile() {
   );
 
   return (
-    <div className="w-full max-w-[900px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="w-full max-w-[1100px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-700">
       
       {/* --- 1. HEADER CARD --- */}
       <div className="relative mb-12 group">
