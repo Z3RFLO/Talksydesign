@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, MessageSquareText, X, MessageCircle } from 'lucide-react';
-import { Routes, Route, useLocation, Link } from 'react-router-dom';
+import { Routes, Route, useLocation, Link, useNavigate } from 'react-router-dom';
 
+import AuthPage from './pages/AuthPage';
 import Sidebar from './components/Sidebar';
 import CreateModal from './components/CreateModal';
 import Feed from './pages/Feed';
@@ -32,24 +33,42 @@ export default function App() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [posts, setPosts] = useState(INITIAL_POSTS);
   const [viewingUser, setViewingUser] = useState(null); // For User Popup
-  
+
+  // --- AUTH STATE ---
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
   // --- THEME STATE ---
   const [isPureBlack, setIsPureBlack] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // --- AUTH HANDLERS ---
+  const handleLogin = (user) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+    navigate('/'); // Redirect to Feed
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    navigate('/'); // Reset to root (which will show AuthPage)
+  };
 
   // --- NEW POST LOGIC (Updated for Boost) ---
   const handleNewPost = (text, tags, options) => {
-    const newPost = { 
-      id: Date.now(), 
-      author: "You", 
-      handle: "@user", 
-      avatar: "Y", 
-      content: text, 
-      likes: 0, 
-      comments: 0, 
-      accent: "border-l-2 border-white", 
-      time: "Just now", 
+    const newPost = {
+      id: Date.now(),
+      author: currentUser?.username || "You",
+      handle: currentUser?.username ? `@${currentUser.username.toLowerCase().replace(/\s/g, '')}` : "@user",
+      avatar: currentUser?.username?.[0].toUpperCase() || "Y",
+      content: text,
+      likes: 0,
+      comments: 0,
+      accent: "border-l-2 border-white",
+      time: "Just now",
       tags: tags || [],
       isBoosted: options?.isBoosted // <--- SAVING BOOST STATE
     };
@@ -70,14 +89,24 @@ export default function App() {
     }
   };
 
+  // If not authenticated, show AuthPage
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex justify-center relative overflow-hidden">
+        <StyleEngine />
+        <AuthPage onLogin={handleLogin} />
+      </div>
+    );
+  }
+
   const isMessagesPage = location.pathname === '/messages';
 
   return (
     <div className="min-h-screen flex justify-center relative overflow-hidden">
       <StyleEngine />
-      
+
       {!isMessagesPage && <Sidebar />}
-      
+
       <main className={`w-full ${!isMessagesPage ? 'pl-[120px] pr-10' : 'px-4'}`}>
         <Routes>
           <Route path="/" element={<Feed posts={posts} onUserClick={handleUserClick} />} />
@@ -85,10 +114,10 @@ export default function App() {
           <Route path="/explore/:topic" element={<TopicFeed posts={posts} onPost={handleNewPost} onUserClick={handleUserClick} />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/messages" element={<Messages />} />
-          
+
           {/* PASS THEME PROPS TO SETTINGS */}
-          <Route path="/settings" element={<Settings isPureBlack={isPureBlack} toggleTheme={toggleTheme} />} />
-          
+          <Route path="/settings" element={<Settings isPureBlack={isPureBlack} toggleTheme={toggleTheme} onLogout={handleLogout} />} />
+
           <Route path="/notifications" element={<div className="text-white pt-40 text-center text-2xl">Notifications</div>} />
         </Routes>
       </main>

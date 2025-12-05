@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Bell, Moon, Lock, User, LogOut, ChevronRight, 
-  Shield, Eye, Volume2, Trash2, Palette 
+import {
+  Bell, Moon, Lock, User, LogOut, ChevronRight,
+  Shield, Eye, Volume2, Trash2, Palette
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Settings({ isPureBlack, toggleTheme }) {
+export default function Settings({ isPureBlack, toggleTheme, onLogout }) {
   const navigate = useNavigate(); // Hook to move between pages
 
   const [settings, setSettings] = useState({
@@ -20,15 +20,14 @@ export default function Settings({ isPureBlack, toggleTheme }) {
   };
 
   const handleLogout = () => {
-    if(confirm("Are you sure you want to log out?")) {
-      alert("Logged out successfully (Demo)");
-      navigate('/');
+    if (confirm("Are you sure you want to log out?")) {
+      onLogout();
     }
   };
 
   return (
     <div className="w-full max-w-[1200px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       <div className="mb-12">
         <h1 className="text-5xl font-display font-black text-white mb-2 tracking-tight">Settings</h1>
         <p className="text-gray-500 text-lg font-medium">Control your signal in the void.</p>
@@ -40,33 +39,33 @@ export default function Settings({ isPureBlack, toggleTheme }) {
         <section>
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 px-2">Account</h3>
           <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
-            
+
             {/* Click to go to Profile */}
-            <SettingRow 
-              icon={User} 
-              label="Edit Profile" 
-              sublabel="Change name, bio, and avatar" 
-              onClick={() => navigate('/profile')} 
-              isLink 
+            <SettingRow
+              icon={User}
+              label="Edit Profile"
+              sublabel="Change name, bio, and avatar"
+              onClick={() => navigate('/profile')}
+              isLink
             />
-            
+
             <div className="h-px w-full bg-white/5"></div>
-            
-            <SettingRow 
-              icon={Lock} 
-              label="Change Password" 
-              onClick={() => alert("Password change feature coming soon!")} 
-              isLink 
+
+            <SettingRow
+              icon={Lock}
+              label="Change Password"
+              onClick={() => alert("Password change feature coming soon!")}
+              isLink
             />
-            
+
             <div className="h-px w-full bg-white/5"></div>
-            
-            <SettingRow 
-              icon={Shield} 
-              label="Two-Factor Authentication" 
-              value="Enabled" 
-              onClick={() => alert("2FA Settings")} 
-              isLink 
+
+            <SettingRow
+              icon={Shield}
+              label="Two-Factor Authentication"
+              value="Enabled"
+              onClick={() => alert("2FA Settings")}
+              isLink
             />
           </div>
         </section>
@@ -75,23 +74,23 @@ export default function Settings({ isPureBlack, toggleTheme }) {
         <section>
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 px-2">Appearance</h3>
           <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
-            
+
             {/* THEME TOGGLE */}
-            <ToggleRow 
-              icon={Palette} 
-              label="App Theme" 
-              sublabel={isPureBlack ? "Active: Void Black (OLED)" : "Active: Deep Nebula"} 
-              isOn={isPureBlack} 
-              onClick={toggleTheme} 
+            <ToggleRow
+              icon={Palette}
+              label="App Theme"
+              sublabel={isPureBlack ? "Active: Void Black (OLED)" : "Active: Deep Nebula"}
+              isOn={isPureBlack}
+              onClick={toggleTheme}
             />
 
             <div className="h-px w-full bg-white/5"></div>
 
-            <ToggleRow 
-              icon={Volume2} 
-              label="In-App Sounds" 
-              isOn={settings.sound} 
-              onClick={() => toggle('sound')} 
+            <ToggleRow
+              icon={Volume2}
+              label="In-App Sounds"
+              isOn={settings.sound}
+              onClick={() => toggle('sound')}
             />
           </div>
         </section>
@@ -100,11 +99,11 @@ export default function Settings({ isPureBlack, toggleTheme }) {
         <section>
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 px-2">Experience</h3>
           <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
-            <ToggleRow 
-              icon={Bell} 
-              label="Push Notifications" 
-              isOn={settings.notifications} 
-              onClick={() => toggle('notifications')} 
+            <ToggleRow
+              icon={Bell}
+              label="Push Notifications"
+              isOn={settings.notifications}
+              onClick={() => toggle('notifications')}
             />
           </div>
         </section>
@@ -123,8 +122,8 @@ export default function Settings({ isPureBlack, toggleTheme }) {
         {/* --- 5. DANGER ZONE (Working) --- */}
         <section>
           <div className="bg-red-500/5 border border-red-500/20 rounded-3xl overflow-hidden mt-4">
-            
-            <button 
+
+            <button
               onClick={handleLogout}
               className="w-full p-6 flex items-center justify-between group hover:bg-red-500/10 transition-colors"
             >
@@ -138,10 +137,10 @@ export default function Settings({ isPureBlack, toggleTheme }) {
                 </div>
               </div>
             </button>
-            
+
             <div className="h-px w-full bg-red-500/10"></div>
 
-            <button 
+            <button
               onClick={() => alert("Account deletion is permanent. Contact support.")}
               className="w-full p-6 flex items-center justify-between group hover:bg-red-500/20 transition-colors"
             >
@@ -166,7 +165,7 @@ export default function Settings({ isPureBlack, toggleTheme }) {
 // --- HELPER COMPONENTS ---
 
 const SettingRow = ({ icon: Icon, label, sublabel, value, isLink, onClick }) => (
-  <div 
+  <div
     onClick={onClick}
     className="p-5 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors group"
   >
