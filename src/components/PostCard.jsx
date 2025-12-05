@@ -3,8 +3,8 @@ import { Heart, MessageCircle, Share2, MoreHorizontal, CheckCircle2, Zap } from 
 
 const Avatar = ({ char, isBoosted }) => (
   <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center text-white font-bold shadow-lg shrink-0 transition-all duration-300
-    ${isBoosted 
-      ? 'bg-yellow-500 text-black border-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.4)]' 
+    ${isBoosted
+      ? 'bg-yellow-500 text-black border-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.4)]'
       : 'bg-gradient-to-br from-[#222] to-[#111] border-white/10'}`
   }>
     {char}
@@ -14,19 +14,19 @@ const Avatar = ({ char, isBoosted }) => (
 export default function PostCard({ post, onUserClick }) {
   // Dynamic Styles based on "Boost"
   const isBoosted = post.isBoosted;
-  
+
   return (
     <div className={`bg-[#0a0a0a]/80 backdrop-blur-sm border rounded-[32px] p-8 relative overflow-hidden transition-all duration-300 group
-      ${isBoosted 
-        ? 'border-yellow-500/40 shadow-[0_0_40px_rgba(234,179,8,0.05)] hover:border-yellow-500/60' 
-        : 'border-white/10 hover:border-white/20 hover:bg-[#111]'}`
+      ${isBoosted
+        ? 'border-yellow-500/40 shadow-[0_0_40px_rgba(234,179,8,0.05)] hover:border-yellow-500/60'
+        : `border-white/10 hover:border-white/20 hover:bg-[#111] shadow-[0_0_30px_rgba(255,255,255,0.02)] hover:shadow-[0_0_50px_rgba(255,255,255,0.05)] ${post.accent || ''}`}`
     }>
-      
+
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
-        <div 
+        <div
           className="flex gap-4 items-center cursor-pointer"
-          onClick={(e) => { e.stopPropagation(); if(onUserClick) onUserClick(post); }}
+          onClick={(e) => { e.stopPropagation(); if (onUserClick) onUserClick(post); }}
         >
           <Avatar char={post.avatar} isBoosted={isBoosted} />
           <div>
@@ -38,14 +38,14 @@ export default function PostCard({ post, onUserClick }) {
             <div className="text-sm text-gray-500">{post.handle} • {post.time}</div>
           </div>
         </div>
-        
+
         {/* Top Right Icon (Menu or Boost Badge) */}
         {isBoosted ? (
           <div className="bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-full text-xs font-bold text-yellow-400 flex items-center gap-1">
-            <Zap size={12} fill="currentColor"/> PROMOTED
+            <Zap size={12} fill="currentColor" /> PROMOTED
           </div>
         ) : (
-          <button className="text-gray-600 hover:text-white transition-colors"><MoreHorizontal size={20}/></button>
+          <button className="text-gray-600 hover:text-white transition-colors"><MoreHorizontal size={20} /></button>
         )}
       </div>
 

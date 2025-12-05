@@ -12,6 +12,7 @@ import Profile from './pages/Profile';
 import Messages from './pages/Messages';
 import UserPopup from './components/UserPopup';
 import Settings from './pages/Settings';
+import LiveBackground from './components/LiveBackground';
 
 // --- INITIAL DATA ---
 const INITIAL_POSTS = [
@@ -104,6 +105,16 @@ export default function App() {
   return (
     <div className="min-h-screen flex justify-center relative overflow-hidden">
       <StyleEngine />
+
+      {/* GLOBAL LIVE BACKGROUND (If not Pure Black) */}
+      {!isPureBlack && (
+        <>
+          <LiveBackground />
+          {/* NEBULA GRADIENTS */}
+          <div className="fixed top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-900/30 rounded-full blur-[120px] pointer-events-none z-0 mix-blend-screen"></div>
+          <div className="fixed bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-indigo-900/30 rounded-full blur-[100px] pointer-events-none z-0 mix-blend-screen"></div>
+        </>
+      )}
 
       {!isMessagesPage && <Sidebar />}
 
