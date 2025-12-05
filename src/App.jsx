@@ -123,7 +123,7 @@ export default function App() {
           <Route path="/" element={<Feed posts={posts} onUserClick={handleUserClick} />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/explore/:topic" element={<TopicFeed posts={posts} onPost={handleNewPost} onUserClick={handleUserClick} />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile posts={posts} />} />
           <Route path="/messages" element={<Messages />} />
 
           {/* PASS THEME PROPS TO SETTINGS */}

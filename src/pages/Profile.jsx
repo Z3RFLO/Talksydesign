@@ -1,162 +1,180 @@
 import React, { useState } from 'react';
-import { 
-  MapPin, Cake, Ghost, Languages, User, GraduationCap, 
-  Home, Briefcase, Edit3, Save, X, Camera 
+import {
+    MapPin, Cake, Ghost, Languages, User, GraduationCap,
+    Home, Briefcase, Edit3, Grid, List, Users
 } from 'lucide-react';
+import CompactPost from '../components/CompactPost';
+import EditProfileModal from '../components/EditProfileModal';
 
-export default function Profile() {
-  // --- STATE: Holds all your profile data ---
-  const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "User",
-    handle: "@user",
-    avatar: "x",
-    bio: "",
-    currentCity: "",
-    birthCity: "",
-    birthday: "",
-    zodiac: "",
-    gender: "",
-    language: "",
-    education: ""
-  });
+export default function Profile({ posts = [] }) {
+    // --- STATE ---
+    const [activeTab, setActiveTab] = useState('posts'); // 'posts' or 'identity'
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Function to handle text changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
-  };
+    const [profile, setProfile] = useState({
+        name: "Design God",
+        handle: "@visuals",
+        avatar: "D",
+        bio: "Dark mode isn't just about black backgrounds. It's about hierarchy.",
+        currentCity: "Neo Tokyo",
+        birthCity: "Kyoto",
+        birthday: "1998-11-24",
+        zodiac: "Sagittarius",
+        gender: "Male",
+        language: "English, Japanese",
+        education: "School of Visual Arts",
+        connections: "1,842"
+    });
 
-  // Helper component for Grid Items
-  const MatrixItem = ({ icon: Icon, label, name, value, colSpan }) => (
-    <div className={`bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 hover:border-white/20 transition-all group ${colSpan || ''}`}>
-      <div className="flex items-center gap-3 mb-3">
-         <Icon size={18} className="text-indigo-500 group-hover:text-white transition-colors" />
-         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</span>
-      </div>
-      
-      {isEditing ? (
-        <input 
-          type="text" 
-          name={name}
-          value={value}
-          onChange={handleChange}
-          className="w-full bg-[#121214] text-white px-3 py-2 rounded-lg outline-none border border-white/10 focus:border-indigo-500 transition-all"
-        />
-      ) : (
-        <div className="text-xl font-medium text-white pl-8 break-words">
-          {value}
-        </div>
-      )}
-    </div>
-  );
+    // Filter posts for this user (Mock logic: assuming current user is "Design_God")
+    const myPosts = posts.filter(p => p.author === "Design_God");
 
-  return (
-    <div className="w-full max-w-[1100px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-700">
-      
-      {/* --- 1. HEADER CARD --- */}
-      <div className="relative mb-12 group">
-        {/* Banner */}
-        <div className="h-60 w-full rounded-[40px] bg-gradient-to-r from-indigo-900 via-purple-900 to-black relative overflow-hidden border border-white/10">
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all duration-500"></div>
-          {isEditing && (
-            <button className="absolute top-4 right-4 bg-black/50 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-white hover:text-black transition-all">
-              <Camera size={16} /> Change Banner
-            </button>
-          )}
-        </div>
+    const handleSaveProfile = (updatedProfile) => {
+        setProfile(updatedProfile);
+    };
 
-        {/* Avatar & Info Wrapper */}
-        <div className="flex flex-col md:flex-row items-end px-10 -mt-16 gap-6 relative z-10">
-          
-          {/* Avatar */}
-          <div className="relative">
-            <div className="w-32 h-32 rounded-[30px] bg-[#0a0a0a] border-4 border-[#0a0a0a] flex items-center justify-center text-white font-bold text-5xl shadow-2xl">
-              {profile.avatar}
+    // Helper: Identity Matrix Item (Read-Only)
+    const MatrixItem = ({ icon: Icon, label, value, colSpan }) => (
+        <div className={`bg-[#0a0a0a]/40 backdrop-blur-md border border-white/5 rounded-3xl p-6 hover:border-white/20 hover:bg-[#0a0a0a]/80 transition-all duration-300 group ${colSpan || ''}`}>
+            <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-xl bg-white/5 group-hover:bg-indigo-500/20 transition-colors">
+                    <Icon size={16} className="text-gray-400 group-hover:text-indigo-400 transition-colors" />
+                </div>
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{label}</span>
             </div>
-            {isEditing && (
-               <button className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white hover:scale-110 border border-black">
-                 <Edit3 size={14} />
-               </button>
-            )}
-          </div>
-
-          {/* Name & Handle */}
-          <div className="flex-1 mb-2 w-full">
-            {isEditing ? (
-              <div className="flex flex-col gap-2">
-                <input 
-                  name="name" 
-                  value={profile.name} 
-                  onChange={handleChange}
-                  className="text-4xl font-black text-white bg-transparent outline-none border-b border-white/20 focus:border-white w-full"
-                />
-                <input 
-                  name="handle" 
-                  value={profile.handle} 
-                  onChange={handleChange}
-                  className="text-lg text-gray-500 bg-transparent outline-none border-b border-white/10 focus:border-gray-400 w-1/2"
-                />
-              </div>
-            ) : (
-              <>
-                <h1 className="text-4xl font-black text-white">{profile.name}</h1>
-                <p className="text-gray-500 text-lg">{profile.handle}</p>
-              </>
-            )}
-          </div>
-
-          {/* Edit/Save Actions */}
-          <div className="flex gap-3 mb-4">
-             {isEditing ? (
-               <>
-                 <button 
-                   onClick={() => setIsEditing(false)} 
-                   className="px-6 py-3 rounded-full bg-green-500 text-black font-bold hover:scale-105 transition-transform flex items-center gap-2 shadow-[0_0_20px_rgba(34,197,94,0.4)]"
-                 >
-                   <Save size={18} /> Save Identity
-                 </button>
-                 <button 
-                   onClick={() => setIsEditing(false)} 
-                   className="w-12 h-12 rounded-full border border-red-500/30 bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors"
-                 >
-                   <X size={20} />
-                 </button>
-               </>
-             ) : (
-               <button 
-                 onClick={() => setIsEditing(true)} 
-                 className="px-6 py-3 rounded-full bg-white text-black font-bold hover:scale-105 transition-transform flex items-center gap-2"
-               >
-                 <Edit3 size={18} /> Edit Identity
-               </button>
-             )}
-          </div>
+            <div className="text-lg font-medium text-white pl-1 break-words">
+                {value || "Not set"}
+            </div>
         </div>
-      </div>
+    );
 
-      {/* --- 2. IDENTITY MATRIX (Editable Grid) --- */}
-      <h3 className="text-2xl font-bold text-white mb-6 px-4 flex items-center gap-2">
-         Identity Matrix <span className="text-xs font-normal text-gray-500 bg-white/10 px-2 py-1 rounded-md">Public</span>
-      </h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
-        <MatrixItem 
-          icon={Briefcase} label="Bio" name="bio" 
-          value={profile.bio} colSpan="col-span-full" 
-        />
-        <MatrixItem icon={Home} label="Current City" name="currentCity" value={profile.currentCity} />
-        <MatrixItem icon={MapPin} label="City of Birth" name="birthCity" value={profile.birthCity} />
-        <MatrixItem icon={Cake} label="Birthday" name="birthday" value={profile.birthday} />
-        <MatrixItem icon={Ghost} label="Zodiac" name="zodiac" value={profile.zodiac} />
-        <MatrixItem icon={User} label="Gender" name="gender" value={profile.gender} />
-        <MatrixItem icon={Languages} label="Mother Tongue" name="language" value={profile.language} />
-        <MatrixItem 
-          icon={GraduationCap} label="School/College" name="education" 
-          value={profile.education} colSpan="col-span-full" 
-        />
-      </div>
+    return (
+        <div className="w-full max-w-[1100px] mx-auto pt-10 pb-32 animate-in fade-in slide-in-from-bottom-8 duration-700">
 
-    </div>
-  );
+            {/* --- 1. HEADER CARD --- */}
+            <div className="relative mb-12 group">
+                {/* Banner */}
+                <div className="h-72 w-full rounded-[48px] bg-gradient-to-r from-indigo-900 via-purple-900 to-black relative overflow-hidden border border-white/10 shadow-2xl">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 mix-blend-overlay"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#000] via-transparent to-transparent opacity-80"></div>
+                </div>
+
+                {/* Avatar & Info Wrapper */}
+                <div className="flex flex-col md:flex-row items-end px-12 -mt-24 gap-8 relative z-10">
+
+                    {/* Avatar */}
+                    <div className="relative group/avatar">
+                        {/* Glow Effect */}
+                        <div className="absolute inset-0 bg-indigo-500 blur-[50px] opacity-0 group-hover/avatar:opacity-40 transition-opacity duration-700 rounded-full"></div>
+
+                        <div className="w-44 h-44 rounded-[48px] bg-[#0a0a0a] border-[8px] border-[#000] flex items-center justify-center text-white font-bold text-7xl shadow-2xl overflow-hidden relative z-10">
+                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-20 group-hover/avatar:opacity-40 transition-opacity"></div>
+                            {profile.avatar}
+                        </div>
+                    </div>
+
+                    {/* Name & Handle & Stats */}
+                    <div className="flex-1 mb-4 w-full">
+                        <h1 className="text-6xl font-black text-white tracking-tighter mb-1 drop-shadow-lg">{profile.name}</h1>
+                        <p className="text-gray-400 text-xl font-medium mb-5">{profile.handle}</p>
+
+                        {/* Stats Row */}
+                        <div className="flex items-center gap-8 text-sm">
+                            <div className="flex items-center gap-2 group cursor-pointer">
+                                <span className="font-black text-white text-xl">{profile.connections}</span>
+                                <span className="text-gray-500 font-medium group-hover:text-indigo-400 transition-colors">Connections</span>
+                            </div>
+                            <div className="flex items-center gap-2 group cursor-pointer">
+                                <span className="font-black text-white text-xl">{myPosts.length}</span>
+                                <span className="text-gray-500 font-medium group-hover:text-indigo-400 transition-colors">Broadcasts</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Edit Action */}
+                    <div className="flex gap-3 mb-8">
+                        <button
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="px-8 py-3.5 rounded-full bg-white text-black font-bold hover:scale-105 hover:bg-gray-100 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                        >
+                            <Edit3 size={18} /> Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- 2. TABS --- */}
+            <div className="flex items-center justify-center mb-12">
+                <div className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-1.5 rounded-full flex gap-1 relative shadow-2xl">
+                    <button
+                        onClick={() => setActiveTab('posts')}
+                        className={`px-8 py-3 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'posts' ? 'bg-white text-black shadow-lg scale-105' : 'text-gray-500 hover:text-white'}`}
+                    >
+                        <Grid size={16} /> My Broadcasts
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('identity')}
+                        className={`px-8 py-3 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'identity' ? 'bg-white text-black shadow-lg scale-105' : 'text-gray-500 hover:text-white'}`}
+                    >
+                        <List size={16} /> Identity Matrix
+                    </button>
+                </div>
+            </div>
+
+            {/* --- 3. CONTENT AREA --- */}
+            <div className="min-h-[400px]">
+
+                {/* POSTS TAB (Compact Grid) */}
+                {activeTab === 'posts' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {myPosts.length > 0 ? (
+                            myPosts.map(post => (
+                                <CompactPost key={post.id} post={post} />
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-24 border border-dashed border-white/10 rounded-[40px] bg-white/5">
+                                <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-500">
+                                    <Grid size={40} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-white mb-2">No broadcasts yet</h3>
+                                <p className="text-gray-500">Your thoughts will appear here.</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* IDENTITY TAB */}
+                {activeTab === 'identity' && (
+                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-4">
+                            <MatrixItem
+                                icon={Briefcase} label="Bio"
+                                value={profile.bio} colSpan="col-span-full"
+                            />
+                            <MatrixItem icon={Home} label="Current City" value={profile.currentCity} />
+                            <MatrixItem icon={MapPin} label="City of Birth" value={profile.birthCity} />
+                            <MatrixItem icon={Cake} label="Birthday" value={profile.birthday} />
+                            <MatrixItem icon={Ghost} label="Zodiac" value={profile.zodiac} />
+                            <MatrixItem icon={User} label="Gender" value={profile.gender} />
+                            <MatrixItem icon={Languages} label="Mother Tongue" value={profile.language} />
+                            <MatrixItem
+                                icon={GraduationCap} label="School/College"
+                                value={profile.education} colSpan="col-span-full"
+                            />
+                        </div>
+                    </div>
+                )}
+
+            </div>
+
+            {/* --- EDIT MODAL --- */}
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                profile={profile}
+                onSave={handleSaveProfile}
+            />
+
+        </div>
+    );
 }
