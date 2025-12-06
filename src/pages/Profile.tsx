@@ -24,18 +24,18 @@ export default function Profile({ posts = [] }: ProfileProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const [profile, setProfile] = useState<ProfileData>({
-        name: "Design God",
-        handle: "@visuals",
-        avatar: "D",
-        bio: "Dark mode isn't just about black backgrounds. It's about hierarchy.",
-        currentCity: "Neo Tokyo",
-        birthCity: "Kyoto",
-        birthday: "1998-11-24",
-        zodiac: "Sagittarius",
+        name: "user",
+        handle: "@user",
+        avatar: "u",
+        bio: "---------",
+        currentCity: "",
+        birthCity: "",
+        birthday: "2000-00-00",
+        zodiac: "",
         gender: "Male",
-        language: "English, Japanese",
-        education: "School of Visual Arts",
-        connections: "1,842",
+        language: "",
+        education: "",
+        connections: "0",
         location: "", // Added to match ProfileData interface
         origin: ""    // Added to match ProfileData interface
     });
@@ -124,13 +124,13 @@ export default function Profile({ posts = [] }: ProfileProps) {
                         onClick={() => setActiveTab('posts')}
                         className={`px-8 py-3 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'posts' ? 'bg-white text-black shadow-lg scale-105' : 'text-gray-500 hover:text-white'}`}
                     >
-                        <Grid size={16} /> My Broadcasts
+                        <Grid size={16} /> Broadcasts
                     </button>
                     <button
                         onClick={() => setActiveTab('identity')}
                         className={`px-8 py-3 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'identity' ? 'bg-white text-black shadow-lg scale-105' : 'text-gray-500 hover:text-white'}`}
                     >
-                        <List size={16} /> Identity Matrix
+                        <List size={16} /> Info
                     </button>
                 </div>
             </div>
