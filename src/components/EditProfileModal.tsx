@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
-import { X, Save, User, MapPin, Calendar, Ghost, Briefcase, Languages, GraduationCap, Camera } from 'lucide-react';
+import React, { useState, ChangeEvent } from 'react';
+import { X, Save, User, MapPin, Calendar, Ghost, Briefcase, Languages, GraduationCap, Camera, LucideIcon } from 'lucide-react';
 
-export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
-    const [formData, setFormData] = useState(profile);
-    const [activeTab, setActiveTab] = useState('basics'); // 'basics' | 'identity'
+export interface ProfileData {
+    avatar?: string;
+    name?: string;
+    handle?: string;
+    bio?: string;
+    currentCity?: string;
+    birthCity?: string;
+    birthday?: string;
+    zodiac?: string;
+    gender?: string;
+    language?: string;
+    education?: string;
+    [key: string]: any;
+}
+
+interface EditProfileModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    profile: ProfileData;
+    onSave: (data: ProfileData) => void;
+}
+
+export default function EditProfileModal({ isOpen, onClose, profile, onSave }: EditProfileModalProps) {
+    const [formData, setFormData] = useState<ProfileData>(profile);
+    const [activeTab, setActiveTab] = useState<'basics' | 'identity'>('basics');
 
     if (!isOpen) return null;
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
@@ -17,7 +39,14 @@ export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
         onClose();
     };
 
-    const InputGroup = ({ icon: Icon, label, name, type = "text" }) => (
+    interface InputGroupProps {
+        icon: LucideIcon;
+        label: string;
+        name: string;
+        type?: string;
+    }
+
+    const InputGroup: React.FC<InputGroupProps> = ({ icon: Icon, label, name, type = "text" }) => (
         <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                 <Icon size={14} className="text-indigo-500" /> {label}
@@ -25,7 +54,7 @@ export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
             <input
                 type={type}
                 name={name}
-                value={formData[name]}
+                value={formData[name] || ''}
                 onChange={handleChange}
                 className="w-full bg-[#121214] text-white px-4 py-3 rounded-xl outline-none border border-white/10 focus:border-indigo-500 focus:bg-[#1a1a1c] transition-all text-sm"
                 placeholder={`Enter ${label.toLowerCase()}...`}
@@ -96,7 +125,7 @@ export default function EditProfileModal({ isOpen, onClose, profile, onSave }) {
                                 </label>
                                 <textarea
                                     name="bio"
-                                    value={formData.bio}
+                                    value={formData.bio || ''}
                                     onChange={handleChange}
                                     className="w-full bg-[#121214] text-white px-4 py-3 rounded-xl outline-none border border-white/10 focus:border-indigo-500 focus:bg-[#1a1a1c] transition-all text-sm h-24 resize-none"
                                     placeholder="Tell your story..."

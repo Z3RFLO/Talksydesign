@@ -1,0 +1,6 @@
+src/components/CreateModal.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/CreateModal.tsx(2,24): error TS6133: 'Plus' is declared but its value is never read.
+src/pages/Feed.tsx(1,8): error TS2300: Duplicate identifier 'PostCard'.
+src/pages/Feed.tsx(2,8): error TS2300: Duplicate identifier 'PostCard'.
+src/pages/Feed.tsx(35,38): error TS6133: 'index' is declared but its value is never read.
+src/pages/Messages.tsx(49,11): error TS6133: 'navigate' is declared but its value is never read.

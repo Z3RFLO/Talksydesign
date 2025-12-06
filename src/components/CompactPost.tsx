@@ -1,7 +1,11 @@
-import React from 'react';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle } from 'lucide-react';
+import { Post } from '../types';
 
-export default function CompactPost({ post }) {
+interface CompactPostProps {
+    post: Post;
+}
+
+export default function CompactPost({ post }: CompactPostProps) {
     return (
         <div className="bg-[#0a0a0a]/60 backdrop-blur-sm border border-white/5 rounded-[24px] p-5 hover:border-white/10 hover:bg-[#111] transition-all duration-300 group cursor-pointer flex flex-col h-full">
 

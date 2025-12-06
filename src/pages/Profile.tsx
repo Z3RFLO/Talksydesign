@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import {
-    MapPin, Cake, Ghost, Languages, User, GraduationCap,
-    Home, Briefcase, Edit3, Grid, List, Users
+    MapPin, Cake, Ghost, Languages, User as UserIcon, GraduationCap,
+    Home, Briefcase, Edit3, Grid, List, LucideIcon
 } from 'lucide-react';
 import CompactPost from '../components/CompactPost';
-import EditProfileModal from '../components/EditProfileModal';
+import EditProfileModal, { ProfileData } from '../components/EditProfileModal';
+import { Post } from '../types';
 
-export default function Profile({ posts = [] }) {
+interface ProfileProps {
+    posts: Post[];
+}
+
+interface MatrixItemProps {
+    icon: LucideIcon;
+    label: string;
+    value?: string;
+    colSpan?: string;
+}
+
+export default function Profile({ posts = [] }: ProfileProps) {
     // --- STATE ---
-    const [activeTab, setActiveTab] = useState('posts'); // 'posts' or 'identity'
+    const [activeTab, setActiveTab] = useState<'posts' | 'identity'>('posts');
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-    const [profile, setProfile] = useState({
+    const [profile, setProfile] = useState<ProfileData>({
         name: "Design God",
         handle: "@visuals",
         avatar: "D",
@@ -23,18 +35,20 @@ export default function Profile({ posts = [] }) {
         gender: "Male",
         language: "English, Japanese",
         education: "School of Visual Arts",
-        connections: "1,842"
+        connections: "1,842",
+        location: "", // Added to match ProfileData interface
+        origin: ""    // Added to match ProfileData interface
     });
 
     // Filter posts for this user (Mock logic: assuming current user is "Design_God")
     const myPosts = posts.filter(p => p.author === "Design_God");
 
-    const handleSaveProfile = (updatedProfile) => {
+    const handleSaveProfile = (updatedProfile: ProfileData) => {
         setProfile(updatedProfile);
     };
 
     // Helper: Identity Matrix Item (Read-Only)
-    const MatrixItem = ({ icon: Icon, label, value, colSpan }) => (
+    const MatrixItem: React.FC<MatrixItemProps> = ({ icon: Icon, label, value, colSpan }) => (
         <div className={`bg-[#0a0a0a]/40 backdrop-blur-md border border-white/5 rounded-3xl p-6 hover:border-white/20 hover:bg-[#0a0a0a]/80 transition-all duration-300 group ${colSpan || ''}`}>
             <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-xl bg-white/5 group-hover:bg-indigo-500/20 transition-colors">
@@ -155,7 +169,7 @@ export default function Profile({ posts = [] }) {
                             <MatrixItem icon={MapPin} label="City of Birth" value={profile.birthCity} />
                             <MatrixItem icon={Cake} label="Birthday" value={profile.birthday} />
                             <MatrixItem icon={Ghost} label="Zodiac" value={profile.zodiac} />
-                            <MatrixItem icon={User} label="Gender" value={profile.gender} />
+                            <MatrixItem icon={UserIcon} label="Gender" value={profile.gender} />
                             <MatrixItem icon={Languages} label="Mother Tongue" value={profile.language} />
                             <MatrixItem
                                 icon={GraduationCap} label="School/College"

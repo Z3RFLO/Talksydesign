@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Heart, Share2, MoreHorizontal, CornerDownRight, Send } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Heart, MoreHorizontal, Send } from 'lucide-react';
 import PostCard from '../components/PostCard';
+import { Post, Comment, User } from '../types';
 
 // --- MOCK COMMENTS DATA ---
-const INITIAL_COMMENTS = [
+const INITIAL_COMMENTS: Comment[] = [
     {
         id: 101,
         author: "CodeNinja",
@@ -54,8 +55,13 @@ const INITIAL_COMMENTS = [
     }
 ];
 
+interface CommentNodeProps {
+    comment: Comment;
+    depth?: number;
+}
+
 // --- RECURSIVE COMMENT COMPONENT ---
-const CommentNode = ({ comment, depth = 0 }) => {
+const CommentNode: React.FC<CommentNodeProps> = ({ comment, depth = 0 }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const hasReplies = comment.replies && comment.replies.length > 0;
 
@@ -125,7 +131,7 @@ const CommentNode = ({ comment, depth = 0 }) => {
                     <div className="absolute -left-6 sm:-left-10 top-0 bottom-0 w-px bg-gradient-to-b from-white/10 to-transparent"></div>
 
                     <div className="flex flex-col gap-3">
-                        {comment.replies.map(reply => (
+                        {comment.replies!.map(reply => (
                             <CommentNode key={reply.id} comment={reply} depth={depth + 1} />
                         ))}
                     </div>
@@ -135,10 +141,15 @@ const CommentNode = ({ comment, depth = 0 }) => {
     );
 };
 
-export default function PostDetails({ posts, onUserClick }) {
-    const { id } = useParams();
+interface PostDetailsProps {
+    posts: Post[];
+    onUserClick: (user: User | Post) => void;
+}
+
+export default function PostDetails({ posts, onUserClick }: PostDetailsProps) {
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [comments, setComments] = useState(INITIAL_COMMENTS);
+    const [comments, setComments] = useState<Comment[]>(INITIAL_COMMENTS);
     const [inputValue, setInputValue] = useState("");
 
     // Find post (ensure ID types match)
@@ -155,7 +166,7 @@ export default function PostDetails({ posts, onUserClick }) {
     const handlePostComment = () => {
         if (!inputValue.trim()) return;
 
-        const newComment = {
+        const newComment: Comment = {
             id: Date.now(),
             author: "You", // In a real app, this would be the current user
             avatar: "Y",

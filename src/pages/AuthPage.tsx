@@ -1,40 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 import {
-    ArrowRight, User, Lock, Mail, Calendar, MapPin,
-    BookOpen, Globe, Ghost, Sparkles, Stars, Zap, MessageCircle, Heart, Share2
+    ArrowRight, User, Lock, Mail, Calendar,
+    Ghost, Sparkles, Share2,
+    Heart, MessageCircle, LucideIcon
 } from 'lucide-react';
 
 /* --- HELPER: ZODIAC CALCULATOR --- */
-const getZodiacSign = (dateString) => {
+interface ZodiacSign {
+    name: string;
+    symbol: string;
+}
+
+const getZodiacSign = (dateString: string): ZodiacSign | null => {
     if (!dateString) return null;
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.getMonth() + 1;
 
-    if ((month == 1 && day <= 20) || (month == 12 && day >= 22)) return { name: "Capricorn", symbol: "♑" };
-    if ((month == 1 && day >= 21) || (month == 2 && day <= 18)) return { name: "Aquarius", symbol: "♒" };
-    if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return { name: "Pisces", symbol: "♓" };
-    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return { name: "Aries", symbol: "♈" };
-    if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return { name: "Taurus", symbol: "♉" };
-    if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return { name: "Gemini", symbol: "♊" };
-    if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return { name: "Cancer", symbol: "♋" };
-    if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return { name: "Leo", symbol: "♌" };
-    if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return { name: "Virgo", symbol: "♍" };
-    if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return { name: "Libra", symbol: "♎" };
-    if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return { name: "Scorpio", symbol: "♏" };
-    if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return { name: "Sagittarius", symbol: "♐" };
+    if ((month === 1 && day <= 20) || (month === 12 && day >= 22)) return { name: "Capricorn", symbol: "♑" };
+    if ((month === 1 && day >= 21) || (month === 2 && day <= 18)) return { name: "Aquarius", symbol: "♒" };
+    if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return { name: "Pisces", symbol: "♓" };
+    if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return { name: "Aries", symbol: "♈" };
+    if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return { name: "Taurus", symbol: "♉" };
+    if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return { name: "Gemini", symbol: "♊" };
+    if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return { name: "Cancer", symbol: "♋" };
+    if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return { name: "Leo", symbol: "♌" };
+    if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return { name: "Virgo", symbol: "♍" };
+    if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return { name: "Libra", symbol: "♎" };
+    if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return { name: "Scorpio", symbol: "♏" };
+    if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return { name: "Sagittarius", symbol: "♐" };
     return null;
 };
 
 /* --- COMPONENT: LIVE VOID BACKGROUND --- */
 const LiveBackground = () => {
-    const canvasRef = useRef(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let particles = [];
+        if (!ctx) return;
+
+        let animationFrameId: number;
+        let particles: Particle[] = [];
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth / 2;
@@ -42,9 +51,16 @@ const LiveBackground = () => {
         };
 
         class Particle {
+            x: number;
+            y: number;
+            size: number;
+            speedX: number;
+            speedY: number;
+            opacity: number;
+
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+                this.x = Math.random() * (canvas!.width);
+                this.y = Math.random() * (canvas!.height);
                 this.size = Math.random() * 1.5 + 0.5;
                 this.speedX = Math.random() * 0.5 - 0.25;
                 this.speedY = Math.random() * 0.5 - 0.25;
@@ -55,13 +71,14 @@ const LiveBackground = () => {
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
+                if (this.x > canvas!.width) this.x = 0;
+                if (this.x < 0) this.x = canvas!.width;
+                if (this.y > canvas!.height) this.y = 0;
+                if (this.y < 0) this.y = canvas!.height;
             }
 
             draw() {
+                if (!ctx) return;
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -161,7 +178,11 @@ const WelcomeHero = () => {
     );
 };
 
-const AuthPage = ({ onLogin }) => {
+interface AuthPageProps {
+    onLogin: (user: any) => void;
+}
+
+const AuthPage = ({ onLogin }: AuthPageProps) => {
     const [isSignup, setIsSignup] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [slideDirection, setSlideDirection] = useState('right');
@@ -181,7 +202,7 @@ const AuthPage = ({ onLogin }) => {
 
     const zodiac = getZodiacSign(formData.birthday);
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -196,7 +217,7 @@ const AuthPage = ({ onLogin }) => {
         }, 400);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         const btn = document.getElementById('auth-btn');
         if (btn) {
@@ -266,8 +287,8 @@ const AuthPage = ({ onLogin }) => {
                     {/* Form Container */}
                     <div className="relative overflow-hidden min-h-[400px]">
                         <form onSubmit={handleSubmit} className={`transition-all duration-500 ease-in-out transform ${isAnimating
-                                ? (slideDirection === 'left' ? '-translate-x-[20%] opacity-0' : 'translate-x-[20%] opacity-0')
-                                : 'translate-x-0 opacity-100'
+                            ? (slideDirection === 'left' ? '-translate-x-[20%] opacity-0' : 'translate-x-[20%] opacity-0')
+                            : 'translate-x-0 opacity-100'
                             }`}>
 
                             {/* --- LOGIN FIELDS --- */}
@@ -380,7 +401,11 @@ const AuthPage = ({ onLogin }) => {
 };
 
 /* --- REUSABLE INPUT COMPONENT --- */
-const InputField = ({ icon: Icon, ...props }) => (
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    icon: LucideIcon;
+}
+
+const InputField: React.FC<InputFieldProps> = ({ icon: Icon, ...props }) => (
     <div className="relative group">
         <div className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-indigo-400 transition-colors duration-300">
             <Icon size={20} />
