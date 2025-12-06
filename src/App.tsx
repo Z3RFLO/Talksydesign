@@ -44,6 +44,8 @@ export default function App() {
 
     // --- THEME STATE ---
     const [isPureBlack, setIsPureBlack] = useState(false);
+    // 'focus' = Centered Overlay, 'quick' = Bottom Right Popup
+    const [composerMode, setComposerMode] = useState<'focus' | 'quick'>('focus');
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -132,7 +134,7 @@ export default function App() {
                     <Route path="/messages" element={<Messages />} />
 
                     {/* PASS THEME PROPS TO SETTINGS */}
-                    <Route path="/settings" element={<Settings isPureBlack={isPureBlack} toggleTheme={toggleTheme} onLogout={handleLogout} />} />
+                    <Route path="/settings" element={<Settings isPureBlack={isPureBlack} toggleTheme={toggleTheme} onLogout={handleLogout} composerMode={composerMode} setComposerMode={setComposerMode} />} />
 
                     <Route path="/notifications" element={<div className="text-white pt-40 text-center text-2xl">Notifications</div>} />
                 </Routes>
@@ -158,7 +160,7 @@ export default function App() {
             )}
 
             {/* MODALS */}
-            <CreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onPost={handleNewPost} />
+            <CreateModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onPost={handleNewPost} mode={composerMode} />
             <UserPopup user={viewingUser} onClose={() => setViewingUser(null)} />
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
     Bell, Lock, User, LogOut, ChevronRight,
-    Shield, Eye, Volume2, Trash2, Palette, LucideIcon
+    Shield, Eye, Volume2, Trash2, Palette, LucideIcon, PenTool
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,8 @@ interface SettingsProps {
     isPureBlack: boolean;
     toggleTheme: () => void;
     onLogout: () => void;
+    composerMode: 'focus' | 'quick';
+    setComposerMode: (mode: 'focus' | 'quick') => void;
 }
 
 interface SettingsState {
@@ -18,7 +20,7 @@ interface SettingsState {
     ghostMode: boolean;
 }
 
-export default function Settings({ isPureBlack, toggleTheme, onLogout }: SettingsProps) {
+export default function Settings({ isPureBlack, toggleTheme, onLogout, composerMode, setComposerMode }: SettingsProps) {
     const navigate = useNavigate(); // Hook to move between pages
 
     const [settings, setSettings] = useState<SettingsState>({
@@ -111,7 +113,25 @@ export default function Settings({ isPureBlack, toggleTheme, onLogout }: Setting
                 {/* --- 3. EXPERIENCE --- */}
                 <section>
                     <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 px-2">Experience</h3>
-                    <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
+                    <div className="bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden mb-8">
+                        {/* COMPOSER MODE TOGGLE */}
+                        <div className="p-5 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors" onClick={() => setComposerMode(composerMode === 'focus' ? 'quick' : 'focus')}>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all ${composerMode === 'quick' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/50' : 'bg-white/5 text-gray-400 border-white/5'}`}>
+                                    <PenTool size={20} />
+                                </div>
+                                <div>
+                                    <div className="font-bold text-white text-lg">Quick Compose</div>
+                                    <div className="text-sm text-gray-500">Open composer in bottom-right corner</div>
+                                </div>
+                            </div>
+                            <div className={`w-14 h-8 rounded-full p-1 transition-all duration-300 ${composerMode === 'quick' ? 'bg-indigo-600' : 'bg-white/10'}`}>
+                                <div className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-all duration-300 ${composerMode === 'quick' ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                            </div>
+                        </div>
+
+                        <div className="h-px w-full bg-white/5"></div>
+
                         <ToggleRow
                             icon={Bell}
                             label="Push Notifications"
