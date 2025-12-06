@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, MessageCircle, Share2, MoreHorizontal, CheckCircle2, Zap } from 'lucide-react';
 
 const Avatar = ({ char, isBoosted }) => (
